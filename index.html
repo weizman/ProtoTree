@@ -50,7 +50,7 @@
                 node.innerHTML += `<li><span found="${includes}" class="tf-nc">${prop}</span><ul id="${'a' + id}"></ul></li>`;
                 tree(node.querySelector('#' + 'a' + id), val, filter, includes);
             }
-            if (!node.parentElement.querySelector('[found="true"]')) {
+            if (!node.parentElement?.querySelector('[found="true"]')) {
                 node.parentElement?.remove();
             }
         }
@@ -66,7 +66,9 @@
             // }
             debugger;
             const filter = location.href.split('?')[1];
-            tree(head.appendChild(document.createElement('ul')), root, filter);
+            const e = document.createElement('ul');
+            tree(e, root, filter);
+            head.appendChild(e);
         });
     }())
 </script>
