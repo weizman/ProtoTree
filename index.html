@@ -46,7 +46,9 @@
                 if (prop === 'value') continue;
                 const val = obj[prop];
                 id += 1;
-                const includes = prop.includes(filter);
+                const includes = prop.includes(filter) &&
+                    // avoid the filter showing in the url
+                    !(obj.value+'' === '[object Location]' && prop.includes('?' + filter));
                 node.innerHTML += `<li><span found="${includes}" class="tf-nc">${prop}</span><ul id="${'a' + id}"></ul></li>`;
                 tree(node.querySelector('#' + 'a' + id), val, filter, includes);
             }
