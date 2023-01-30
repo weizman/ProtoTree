@@ -1,0 +1,70 @@
+<link rel="stylesheet" href="https://unpkg.com/treeflex/dist/css/treeflex.css">
+<script src="https://cdn.jsdelivr.net/npm/enhance-object-property-names-getters"></script>
+<script>
+    function main(start) {
+        function cb(path) {
+            let node = root;
+            for (let i =  0; i < path.length; i++) {
+                const val = path[i];
+                const prop = (val+'').split('[object ').join('').split(']').join('');
+                if (!node[prop]) {
+                    node[prop] = path.length - 1 === i ? null : {value: val};
+                }
+                node = node[prop];
+            }
+        }
+
+        const root = {};
+        const props = Object.getAllPropertyNames(start);
+        for (let i = 0; i < props.length; i++) {
+            const prop = props[i];
+            let obj = start[prop];
+            const protos = [obj];
+            while (true) {
+                if (!obj) break;
+                const proto = Object.getPrototypeOf(obj);
+                if (!proto) break;
+                protos.push(proto);
+                obj = proto;
+            }
+            protos.reverse();
+            cb(protos);
+        }
+        return root;
+    }
+</script>
+<script>
+    function generateRandomString(n) {
+        let randomString           = '';
+        let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        for ( let i = 0; i < n; i++ ) {
+            randomString += characters.charAt(Math.floor(Math.random()*characters.length));
+        }
+        return randomString;
+    }
+
+    function tree(node, obj) {
+        if (!obj) {
+            return '';
+        }
+        for (const prop in obj) {
+            if (prop === 'value') continue;
+            const val = obj[prop];
+            const id = generateRandomString(6);
+            node.innerHTML += `<li><span class="tf-nc">${prop}</span><ul id="${id}"></ul></li>`;
+            tree(node.querySelector('#'+id), val);
+        }
+    }
+
+    setTimeout(function(){
+        const root = main(window);
+        console.log(root);
+        // const treed = treeify.asTree(tree);
+        // console.log(treed);
+        debugger;
+        tree(head.appendChild(document.createElement('ul')), root);
+    });
+</script>
+<body>
+    <div id="head" class="tf-tree"></div>
+</body>
