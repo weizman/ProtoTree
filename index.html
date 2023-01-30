@@ -65,7 +65,8 @@
             //     delete root['Object'][p];
             // }
             debugger;
-            tree(head.appendChild(document.createElement('ul')), root, 'Document');
+            const filter = location.href.split('?')[1];
+            tree(head.appendChild(document.createElement('ul')), root, filter);
         });
     }())
 </script>
