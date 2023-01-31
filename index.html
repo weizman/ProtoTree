@@ -128,7 +128,9 @@
                 if (
                     prop.startsWith('__') ||
                     prop.includes('google') ||
-                    prop.includes('amp')
+                    prop.includes('amp') ||
+                    prop.includes('ggeac') ||
+                    prop.includes('default_')
                 ) {
                     return false;
                 }
