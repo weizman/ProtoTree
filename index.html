@@ -14,7 +14,13 @@
             width: 70%;
         }
         #head {
+            float: left;
             height: 50%;
+        }
+        #head2 {
+            padding: 20px;
+            margin: 20px;
+            overflow: hidden;
         }
         #start {
             height: 40%;
@@ -214,7 +220,7 @@
     </script>
 </head>
 <body>
-    <div style="padding: 10px;">
+    <div style="overflow: hidden; padding: 10px;">
         <div id="head">
             <h3>The Prototype Chain ⛓️</h3>
             <div id="info">
@@ -281,10 +287,22 @@
             <u>shortcuts to first few levels in the tree:</u>
             <div id="menu"></div>
         </div>
-        <div id="start"></div>
+        <div id="head2">
+            <!-- test-1 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-1379968351324902"
+                 data-ad-slot="4374038862"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
         <script>
             input.value = new URLSearchParams(window.location.search).get('filters');
         </script>
     </div>
+    <div id="start"></div>
 </body>
 </html>
