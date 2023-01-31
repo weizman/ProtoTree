@@ -1,13 +1,16 @@
 <html>
 <head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/treeflex/dist/css/treeflex.css">
     <script src="https://cdn.jsdelivr.net/npm/enhance-object-property-names-getters"></script>
+    <script src="https://cdn.jsdelivr.net/npm/treeify@1.1.0/treeify.js"></script>
     <style>
         #head {
-            height: 20%;
+            height: 30%;
         }
         #start {
-            height: 60%;
+            height: 50%;
             border-style: solid;
             margin: 20px;
             padding: 20px;
@@ -24,6 +27,8 @@
                 }
                 return false;
             }
+
+            const values = {};
 
             function main(start) {
                 function getProp(val) {
@@ -47,7 +52,9 @@
                         const val = path[i];
                         const prop = getProp(val);
                         if (!node[prop]) {
-                            node[prop] = path.length - 1 === i ? null : {value: val};
+                            id += 1;
+                            values['b' + id] = val;
+                            node[prop] = path.length - 1 === i ? null : {_value_reference: 'vf' + id};
                         }
                         node = node[prop];
                     }
@@ -99,11 +106,11 @@
                     }
                 }
                 for (const prop in obj) {
-                    if (prop === 'value') continue;
+                    if (prop === '_value_reference') continue;
                     const val = obj[prop];
                     id += 1;
-                    node.innerHTML += `<li><span found="${includes(opts, prop, obj.value)}" class="tf-nc">${prop}</span><ul id="${'a' + id}"></ul></li>`;
-                    tree(node.querySelector('#' + 'a' + id), val, opts);
+                    node.innerHTML += `<li><span found="${includes(opts, prop, obj.value)}" class="tf-nc">${prop}</span><ul id="${'id' + id}"></ul></li>`;
+                    tree(node.querySelector('#' + 'id' + id), val, opts);
                 }
                 if (!node.parentElement?.querySelector('[found="true"]')) {
                     node.parentElement?.remove();
@@ -125,27 +132,86 @@
                 return opts;
             }
 
+            function getLayers(start) {
+                const layers = {
+                    1: [],
+                    2: [],
+                    3: [],
+                    4: [],
+                    5: [],
+                    6: [],
+                    7: [],
+                    8: [],
+                    9: [],
+                    10: [],
+                    11: [],
+                    12: [],
+                }
+                const spans = start.querySelectorAll('span');
+                for (let i = 0; i < spans.length; i++) {
+                    const span = spans[i];
+                    let d = -1, s = span;
+                    while (s !== start) {
+                        d += 1;
+                        s = s.parentElement;
+                    }
+                    layers[d/2].push(span);
+                }
+                return layers;
+            }
+
+            function prepareMenu(menu, layers, max = 12) {
+                const ul = document.createElement('ul');
+                const li = document.createElement('li');
+                for (const level in layers) {
+                    if (!max) continue;
+                    max -= 1;
+                    const layer = layers[level];
+                    for (let i = 0; i < layer.length; i++) {
+                        const span = layer[i];
+                        const a = document.createElement('a');
+                        a.textContent = span.textContent;
+                        a.href = 'javascript:;';
+                        a.onclick = () => span.scrollIntoView({behavior: 'smooth'})
+                        li.appendChild(a);
+                        li.append(' | ');
+                        if (li.children.length % 9 === 0) {
+                            li.appendChild(document.createElement('br'));
+                        }
+                    }
+                    ul.appendChild(li);
+                }
+                li.lastChild.remove();
+                li.append(' (shortcuts to first couple of levels in the tree)');
+                menu.appendChild(ul);
+            }
+
             setTimeout(function () {
                 const root = main(window);
+                console.log('%c👀 Observe full live tree representing the full prototype chain:', 'color:deepskyblue');
                 console.log(root);
-                // const treed = treeify.asTree(tree);
-                // console.log(treed);
-                // for (const p in root['Object']) {
-                //     if (p === 'EventTarget') continue
-                //     delete root['Object'][p];
-                // }
+                console.log('%c🗺️ Map each entry in the full tree above to its real actual object in runtime:', 'color:deepskyblue');
+                console.log(values);
+                console.log('%c👀 Observe the full tree visually', 'color:deepskyblue');
+                console.log(treeify.asTree(root));
+                console.log('%c👆🏻 Begin at the top of the console 👆🏻', 'color:deepskyblue');
                 const e = document.createElement('ul');
                 tree(e, root, opts(window.location.search));
                 start.appendChild(e);
                 start.setAttribute('class', 'tf-tree');
+                const layers = getLayers(start);
+                prepareMenu(menu, layers, 2);
             });
         }())
     </script>
 </head>
 <body>
-    <div id="head">
-        test test test
+    <div style="padding: 10px;">
+        <div id="head">
+            <div id="menu"></div>
+            test test test
+        </div>
+        <div id="start"></div>
     </div>
-    <div id="start"></div>
 </body>
 </html>
