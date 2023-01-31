@@ -15,6 +15,8 @@
             font-size: 12px !important;
         }
         #menu {
+            padding-left: 5px;
+            font-size: 12px !important;
             width: 70%;
         }
         #head {
@@ -198,8 +200,7 @@
             }
 
             function prepareMenu(menu, layers, maxLevels = 12, maxItems = 10) {
-                const ul = document.createElement('ul');
-                const li = document.createElement('li');
+                const div = document.createElement('div');
                 for (const level in layers) {
                     const layer = layers[level];
                     if (!--maxLevels) break;
@@ -210,16 +211,15 @@
                         a.textContent = span.textContent;
                         a.href = 'javascript:;';
                         a.onclick = () => span.scrollIntoView({behavior: 'smooth'})
-                        li.appendChild(a);
-                        li.append(' | ');
-                        if (li.children.length % 9 === 0) {
-                            li.appendChild(document.createElement('br'));
+                        div.appendChild(a);
+                        div.append(' | ');
+                        if (div.children.length % 9 === 0) {
+                            div.appendChild(document.createElement('br'));
                         }
                     }
-                    ul.appendChild(li);
                 }
-                li.lastChild?.remove();
-                menu.appendChild(ul);
+                div.lastChild?.remove();
+                menu.appendChild(div);
             }
 
             setTimeout(function () {
@@ -306,7 +306,6 @@
                 </li>
             </ul>
             <h3>Shortcuts 🎯</h3>
-            <u>shortcuts to first few levels in the tree:</u>
             <div id="menu"></div>
         </div>
         <div id="head2">
@@ -326,5 +325,6 @@
         </script>
     </div>
     <div id="start"></div>
+    <div style="padding-left: 10px"> <i>~ Made with ❤️ By <a href="https://weizman.github.io/page-about">Gal Weizman</a></i> </div>
 </body>
 </html>
