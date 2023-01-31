@@ -1,79 +1,151 @@
-<link rel="stylesheet" href="https://unpkg.com/treeflex/dist/css/treeflex.css">
-<script src="https://cdn.jsdelivr.net/npm/enhance-object-property-names-getters"></script>
-<script>
-    (function(){
-        function main(start) {
-            function cb(path) {
-                let node = root;
-                for (let i =  0; i < path.length; i++) {
-                    const val = path[i];
-                    const prop = (val+'').split('[object ').join('').split(']').join('');
-                    if (!node[prop]) {
-                        node[prop] = path.length - 1 === i ? null : {value: val};
+<html>
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/treeflex/dist/css/treeflex.css">
+    <script src="https://cdn.jsdelivr.net/npm/enhance-object-property-names-getters"></script>
+    <style>
+        #head {
+            height: 20%;
+        }
+        #start {
+            height: 60%;
+            border-style: solid;
+            margin: 20px;
+            padding: 20px;
+        }
+    </style>
+    <script>
+        (function () {
+            function isPrimitive(v) {
+                if (null === v || undefined === v) {
+                    return true;
+                }
+                if (['boolean', 'number', 'string'].includes(typeof v)) {
+                    // return true;
+                }
+                return false;
+            }
+
+            function main(start) {
+                function getProp(val) {
+                    switch (val) {
+                        case Number.prototype:
+                            return 'Number';
+                        case Array.prototype:
+                            return 'Array';
+                        case Boolean.prototype:
+                            return 'Boolean';
+                        case String.prototype:
+                            return 'String';
+                        default:
+                            return (val + '').split('[object ').join('').split(']').join('');
                     }
-                    node = node[prop];
+                }
+
+                function cb(path) {
+                    let node = root;
+                    for (let i = 0; i < path.length; i++) {
+                        const val = path[i];
+                        const prop = getProp(val);
+                        if (!node[prop]) {
+                            node[prop] = path.length - 1 === i ? null : {value: val};
+                        }
+                        node = node[prop];
+                    }
+                }
+
+                const root = {};
+                const props = Object.getAllPropertyNames(start);
+                for (let i = 0; i < props.length; i++) {
+                    const prop = props[i];
+                    let obj = start[prop];
+                    if (isPrimitive(obj)) continue;
+                    const protos = [obj];
+                    while (true) {
+                        if (isPrimitive(obj)) break;
+                        const proto = Object.getPrototypeOf(obj);
+                        if (!proto) break;
+                        protos.push(proto);
+                        obj = proto;
+                    }
+                    protos.reverse();
+                    cb(protos);
+                }
+                return root;
+            }
+
+            function includes(opts, prop) {
+                prop = prop.split('filters=')[0];
+                for (const filter of opts.filters) {
+                    let found = false;
+                    if (prop.includes(filter.filter)) {
+                        found = true;
+                    }
+                    if (filter.not) {
+                        found = !found;
+                    }
+                    if (found) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            let id = 0;
+
+            function tree(node, obj, opts) {
+                if (!obj) {
+                    if (!node.parentElement.querySelector('[found="true"]')) {
+                        node.parentElement.remove();
+                    }
+                }
+                for (const prop in obj) {
+                    if (prop === 'value') continue;
+                    const val = obj[prop];
+                    id += 1;
+                    node.innerHTML += `<li><span found="${includes(opts, prop, obj.value)}" class="tf-nc">${prop}</span><ul id="${'a' + id}"></ul></li>`;
+                    tree(node.querySelector('#' + 'a' + id), val, opts);
+                }
+                if (!node.parentElement?.querySelector('[found="true"]')) {
+                    node.parentElement?.remove();
                 }
             }
 
-            const root = {};
-            const props = Object.getAllPropertyNames(start);
-            for (let i = 0; i < props.length; i++) {
-                const prop = props[i];
-                let obj = start[prop];
-                const protos = [obj];
-                while (true) {
-                    if (!obj) break;
-                    const proto = Object.getPrototypeOf(obj);
-                    if (!proto) break;
-                    protos.push(proto);
-                    obj = proto;
+            function opts(queryString) {
+                const opts = {filters: []};
+                const urlParams = new URLSearchParams(queryString);
+                const filters = urlParams.get('filters');
+                for (const filter of filters.split(',')) {
+                    const f = { not: false, filter };
+                    if (filter[0] === '!') {
+                        f.not = true;
+                        f.filter = filter.split('!').join('');
+                    }
+                    opts.filters.push(f);
                 }
-                protos.reverse();
-                cb(protos);
+                return opts;
             }
-            return root;
-        }
 
-        let id = 0;
-
-        function tree(node, obj, filter) {
-            if (!obj) {
-                if (!node.parentElement.querySelector('[found="true"]')) {
-                    node.parentElement.remove();
-                }
-            }
-            for (const prop in obj) {
-                if (prop === 'value') continue;
-                const val = obj[prop];
-                id += 1;
-                const includes = prop.includes(filter) &&
-                    // avoid the filter showing in the url
-                    !(obj.value+'' === '[object Location]' && prop.includes('?' + filter));
-                node.innerHTML += `<li><span found="${includes}" class="tf-nc">${prop}</span><ul id="${'a' + id}"></ul></li>`;
-                tree(node.querySelector('#' + 'a' + id), val, filter, includes);
-            }
-            if (!node.parentElement?.querySelector('[found="true"]')) {
-                node.parentElement?.remove();
-            }
-        }
-
-        setTimeout(function(){
-            const root = main(window);
-            console.log(root);
-            // const treed = treeify.asTree(tree);
-            // console.log(treed);
-            // for (const p in root['Object']) {
-            //     if (p === 'EventTarget') continue
-            //     delete root['Object'][p];
-            // }
-            debugger;
-            const filter = location.href.split('?')[1];
-            const e = document.createElement('ul');
-            tree(e, root, filter);
-            head.appendChild(e);
-        });
-    }())
-</script>
+            setTimeout(function () {
+                const root = main(window);
+                console.log(root);
+                // const treed = treeify.asTree(tree);
+                // console.log(treed);
+                // for (const p in root['Object']) {
+                //     if (p === 'EventTarget') continue
+                //     delete root['Object'][p];
+                // }
+                const e = document.createElement('ul');
+                tree(e, root, opts(window.location.search));
+                start.appendChild(e);
+                start.setAttribute('class', 'tf-tree');
+            });
+        }())
+    </script>
+</head>
 <body>
-    <div id="head" class="tf-tree"></div>
+    <div id="head">
+        test test test
+    </div>
+    <div id="start"></div>
 </body>
+</html>
