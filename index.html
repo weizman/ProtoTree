@@ -259,6 +259,7 @@
 <body>
     <div style="overflow: hidden;">
         <div id="head">
+            <h3 id="notice" style="display: none; color: red">This app makes more sense on desktop rather than mobile devices!</h3>
             <h3>The Prototype Chain ⛓️</h3>
             <div id="info">
                 <ul>
@@ -333,6 +334,7 @@
                  data-full-width-responsive="true"></ins>
             <script>
                 window.orientation > -1 || (adsbygoogle = window.adsbygoogle || []).push({});
+                window.orientation > -1 && (notice.style.display = 'block');
             </script>
         </div>
         <script>
