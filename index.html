@@ -8,6 +8,9 @@
     <script src="https://cdn.jsdelivr.net/npm/enhance-object-property-names-getters"></script>
     <script src="https://cdn.jsdelivr.net/npm/treeify@1.1.0/treeify.js"></script>
     <style>
+        h3 {
+            font-size: 16px;
+        }
         ul,li {
             font-size: 12px !important;
         }
@@ -16,13 +19,11 @@
         }
         #head {
             padding: 10px;
-            border-style: solid;
-            margin: 20px;
+            margin: 5px;
             float: left;
             height: 50%;
         }
         #head2 {
-            border-style: solid;
             padding: 20px;
             margin: 20px;
             overflow: hidden;
@@ -44,6 +45,19 @@
                     // return true;
                 }
                 return false;
+            }
+
+            // because of adsense
+            function isFrame(v) {
+                let i = 0;
+                let w;
+                while (w) {
+                    w = top[i];
+                    if (v === w) {
+                        return true;
+                    }
+                    i++;
+                }
             }
 
             const values = {};
@@ -83,10 +97,10 @@
                 for (let i = 0; i < props.length; i++) {
                     const prop = props[i];
                     let obj = start[prop];
-                    if (isPrimitive(obj)) continue;
+                    if (isPrimitive(obj) || isFrame(obj)) continue;
                     const protos = [obj];
                     while (true) {
-                        if (isPrimitive(obj)) break;
+                        if (isPrimitive(obj) || isFrame(obj)) break;
                         const proto = Object.getPrototypeOf(obj);
                         if (!proto) break;
                         protos.push(proto);
@@ -99,6 +113,9 @@
             }
 
             function includes(opts, prop) {
+                if (prop.includes('filters=')) {
+                    return false;
+                }
                 prop = prop.split('filters=')[0];
                 if (!opts.filters.length) return true;
                 for (const filter of opts.filters) {
@@ -225,7 +242,7 @@
     </script>
 </head>
 <body>
-    <div style="overflow: hidden; padding: 10px;">
+    <div style="overflow: hidden;">
         <div id="head">
             <h3>The Prototype Chain ⛓️</h3>
             <div id="info">
