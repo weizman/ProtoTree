@@ -76,7 +76,11 @@
                         case String.prototype:
                             return 'String';
                         default:
-                            return (val + '').split('[object ').join('').split(']').join('');
+                            try {
+                                return (val + '').split('[object ').join('').split(']').join('');
+                            } catch (e) {
+                                console.error(val, e);
+                            }
                     }
                 }
 
@@ -121,7 +125,11 @@
                 }
                 prop = prop.split('filters=')[0].toLowerCase();
                 // ignore adsense stuff
-                if (prop.startsWith('__') || prop.includes('google')) {
+                if (
+                    prop.startsWith('__') ||
+                    prop.includes('google') ||
+                    prop.includes('amp')
+                ) {
                     return false;
                 }
                 if (!opts.filters.length) return true;
