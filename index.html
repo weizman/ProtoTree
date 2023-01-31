@@ -115,15 +115,19 @@
             }
 
             function includes(opts, prop) {
-                // ignore filters query param and adsense stuff
-                if (prop.includes('filters=') || prop.startsWith('__')) {
+                // ignore filters query param
+                if (prop.includes('filters=')) {
                     return false;
                 }
-                prop = prop.split('filters=')[0];
+                prop = prop.split('filters=')[0].toLowerCase();
+                // ignore adsense stuff
+                if (prop.startsWith('__') || prop.includes('google')) {
+                    return false;
+                }
                 if (!opts.filters.length) return true;
                 for (const filter of opts.filters) {
                     let found = false;
-                    if (prop.includes(filter.filter)) {
+                    if (prop.includes(filter.filter.toLowerCase())) {
                         found = true;
                     }
                     if (filter.not) {
