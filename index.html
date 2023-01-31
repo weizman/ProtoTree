@@ -85,6 +85,7 @@
 
             function includes(opts, prop) {
                 prop = prop.split('filters=')[0];
+                if (!opts.filters.length) return true;
                 for (const filter of opts.filters) {
                     let found = false;
                     if (prop.includes(filter.filter)) {
@@ -124,6 +125,7 @@
                 const opts = {filters: []};
                 const urlParams = new URLSearchParams(queryString);
                 const filters = urlParams.get('filters');
+                if (!filters) return opts;
                 for (const filter of filters.split(',')) {
                     const f = { not: false, filter };
                     if (filter[0] === '!') {
@@ -184,7 +186,7 @@
                     }
                     ul.appendChild(li);
                 }
-                li.lastChild.remove();
+                li.lastChild?.remove();
                 menu.appendChild(ul);
             }
 
