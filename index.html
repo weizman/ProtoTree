@@ -115,7 +115,8 @@
             }
 
             function includes(opts, prop) {
-                if (prop.includes('filters=')) {
+                // ignore filters query param and adsense stuff
+                if (prop.includes('filters=') || prop.startsWith('__')) {
                     return false;
                 }
                 prop = prop.split('filters=')[0];
