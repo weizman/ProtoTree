@@ -6,11 +6,14 @@
     <script src="https://cdn.jsdelivr.net/npm/enhance-object-property-names-getters"></script>
     <script src="https://cdn.jsdelivr.net/npm/treeify@1.1.0/treeify.js"></script>
     <style>
+        #menu {
+            width: 70%;
+        }
         #head {
-            height: 30%;
+            height: 55%;
         }
         #start {
-            height: 50%;
+            height: 40%;
             border-style: solid;
             margin: 20px;
             padding: 20px;
@@ -160,13 +163,13 @@
                 return layers;
             }
 
-            function prepareMenu(menu, layers, max = 12) {
+            function prepareMenu(menu, layers, maxLevels = 12, maxItems = 10) {
                 const ul = document.createElement('ul');
                 const li = document.createElement('li');
                 for (const level in layers) {
-                    if (!max) continue;
-                    max -= 1;
                     const layer = layers[level];
+                    if (!--maxLevels) break;
+                    if (layer.length > maxItems) continue;
                     for (let i = 0; i < layer.length; i++) {
                         const span = layer[i];
                         const a = document.createElement('a');
@@ -182,7 +185,6 @@
                     ul.appendChild(li);
                 }
                 li.lastChild.remove();
-                li.append(' (shortcuts to first couple of levels in the tree)');
                 menu.appendChild(ul);
             }
 
@@ -200,7 +202,7 @@
                 start.appendChild(e);
                 start.setAttribute('class', 'tf-tree');
                 const layers = getLayers(start);
-                prepareMenu(menu, layers, 2);
+                prepareMenu(menu, layers, 6, 30);
             });
         }())
     </script>
@@ -208,8 +210,63 @@
 <body>
     <div style="padding: 10px;">
         <div id="head">
+            <h3>The Prototype Chain ⛓️</h3>
+            <div id="info">
+                <ul>
+                    <li>
+                        Here you can observe the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain">prototype chain</a> generated in your browser, presented as a tree
+                        <ul>
+                            <li>
+                                The tree can vary depending on:
+                                <ul>
+                                    <li>
+                                        The current browser you use
+                                    </li>
+                                    <li>
+                                        Any extensions and plugins you use
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Further information is presented in the console, make sure to check that out too
+                    </li>
+                </ul>
+            </div>
+            <h3>Filters ⚙️</h3>
+            <ul>
+                <li>
+                    Since the full tree is overwhelming, you can use filters by adding the <code>filters</code> query param
+                    <ul>
+                        <li>
+                            Multiple filters can be separated by using <code>","</code>
+                        </li>
+                        <li>
+                            To achieve negative effect ("everything but") use <code>"!"</code> at the beginning of the filter
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            Here are some examples:
+                            <ul>
+                                <li>
+                                    <a href="?filters=XMLHttp">XMLHttp</a>
+                                </li>
+                                <li>
+                                    <a href="?filters=!function">!function</a>
+                                </li>
+                                <li>
+                                    <a href="?filters=Bool,Document">Bool,Document</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>Shortcuts 🎯</h3>
+            <u>shortcuts to first few levels in the tree:</u>
             <div id="menu"></div>
-            test test test
         </div>
         <div id="start"></div>
     </div>
