@@ -106,7 +106,7 @@
                             <a href="?filters=XMLHttp">XMLHttp</a> |
                             <a href="?filters=!function">!function</a> |
                             <a href="?filters=Bool,Document">Bool,Document</a> |
-                            <input placeholder="insert filter" id="input"
+                            <input style="width: 200px" placeholder="insert filter" id="input"
                                    onblur="var searchParams = new URLSearchParams(window.location.search);searchParams.set('filters', input.value);window.location.search = searchParams.toString();"
                             >
                         </li>
@@ -358,11 +358,11 @@
                 const layers = getLayers(start);
                 prepareMenu(menu, layers, 6, 30);
                 document.querySelectorAll('.tf-nc').forEach(span => {
-                   span.addEventListener('click', () =>
-                       open(
-                           'https://www.google.com/search?q=mdn+' + span.textContent.split(' ').join('+'),
-                           '_blank'
-                       )
+                   span.addEventListener('click', () => {
+                           var searchParams = new URLSearchParams(window.location.search);
+                           searchParams.set('filters', span.textContent);
+                           window.location.search = searchParams.toString();
+                       }
                    );
                 });
             }());
