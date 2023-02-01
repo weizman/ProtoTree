@@ -165,7 +165,7 @@
                             return 'String';
                         default:
                             try {
-                                return (val + '').split('[object ').join('').split(']').join('');
+                                return (val + '').split('[object ').join('').split(']').join('').split('\n').join('');
                             } catch (e) {
                                 console.error(val, e);
                             }
