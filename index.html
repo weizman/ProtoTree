@@ -8,6 +8,15 @@
     <script src="https://cdn.jsdelivr.net/npm/enhance-object-property-names-getters"></script>
     <script src="https://cdn.jsdelivr.net/npm/treeify@1.1.0/treeify.js"></script>
     <style>
+        .tf-nc {
+            cursor: pointer;
+        }
+        body {
+            background-color: azure;
+        }
+        .function {
+            color: cornflowerblue;
+        }
         h3 {
             font-size: 16px;
         }
@@ -31,6 +40,7 @@
             overflow: hidden;
         }
         #start {
+            background-color: lightcyan;
             height: 40%;
             border-style: solid;
             margin: 20px;
@@ -165,7 +175,11 @@
                             return 'String';
                         default:
                             try {
-                                return (val + '').split('[object ').join('').split(']').join('').split('\n').join('');
+                                return (val + '')
+                                    .split('[object ').join('')
+                                    .split('{ [native code] }').join('')
+                                    .split(']').join('')
+                                    .split('\n').join('');
                             } catch (e) {
                                 console.error(val, e);
                             }
@@ -338,8 +352,19 @@
                 tree(e, root, opts(window.location.search));
                 start.appendChild(e);
                 start.setAttribute('class', 'tf-tree');
+                e.innerHTML = e.innerHTML
+                    .split('function').join('<xxx class="function">function</xxx>')
+                    .split('()').join('<xxx class="function">()</xxx>');
                 const layers = getLayers(start);
                 prepareMenu(menu, layers, 6, 30);
+                document.querySelectorAll('.tf-nc').forEach(span => {
+                   span.addEventListener('click', () =>
+                       open(
+                           'https://www.google.com/search?q=mdn+' + span.textContent.split(' ').join('+'),
+                           '_blank'
+                       )
+                   );
+                });
             }());
         }())
     </script>
