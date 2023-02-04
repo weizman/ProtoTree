@@ -1,5 +1,113 @@
 <html>
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@lavamoat/lavatube/lavatube.js"></script>
+    <script>
+        (function () {
+            function isPrimitive(v) {
+                if (null === v || undefined === v) {
+                    return true;
+                }
+                if (['boolean', 'number', 'string'].includes(typeof v)) {
+                    return true;
+                }
+                return false;
+            }
+
+            // because of adsense
+            function isFrame(v) {
+                let i = 0;
+                let w;
+                while (w) {
+                    w = top[i];
+                    if (v === w) {
+                        return true;
+                    }
+                    i++;
+                }
+            }
+
+            const root = {};
+            const values = {};
+
+            function cb(path) {
+                let node = root;
+                for (let i = 0; i < path.length; i++) {
+                    const val = path[i];
+                    const prop = getProp(val);
+                    if (!node[prop]) {
+                        id += 1;
+                        values['b' + id] = val;
+                        node[prop] = path.length - 1 === i ? null : {_value_reference: 'vf' + id};
+                    }
+                    node = node[prop];
+                }
+            }
+
+            function getProp(val) {
+                switch (val) {
+                    case Symbol.prototype:
+                        return 'Symbol';
+                    case Number.prototype:
+                        return 'Number';
+                    case Array.prototype:
+                        return 'Array';
+                    case Boolean.prototype:
+                        return 'Boolean';
+                    case String.prototype:
+                        return 'String';
+                    default:
+                        let v = '';
+                        try {
+                            if (typeof val === 'symbol') {
+                                v = val.toString();
+                            }
+                            else if (typeof val === 'function') {
+                                v = Function.prototype.toString.call(val);
+                            } else {
+                                v += val;
+                            }
+                            return v
+                                .split('[object ').join('')
+                                .split('{ [native code] }').join('')
+                                .split(']').join('')
+                                .split('\n').join('');
+                        } catch (e) {
+                            return ({}).toString.call(val).split('[object ').join('').split(']').join('');
+                        }
+                }
+            }
+
+            function main(obj) {
+                if (isPrimitive(obj) || isFrame(obj)) return;
+                const protos = [obj];
+                while (true) {
+                    if (isPrimitive(obj) || isFrame(obj)) break;
+                    const proto = Object.getPrototypeOf(obj);
+                    if (!proto) break;
+                    protos.push(proto);
+                    obj = proto;
+                }
+                protos.reverse();
+                cb(protos);
+            }
+
+            let id = 0;
+
+            (function(){
+                const lt = new LavaTube(main, {
+                    onShouldIgnoreError: (p, o, e) => {
+                        // console.error('sync error in LavaTube:', e);
+                        return true;
+                    },
+                    maxRecursionLimit: 9,
+                });
+                delete top.LavaTube;
+                lt.walk(window);
+                top.root = root;
+                top.values = values;
+            }());
+        }());
+    </script>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳️</text></svg>">
     <title>Proto Tree</title>
     <meta name="author" content="Gal Weizman">
@@ -45,11 +153,15 @@
     <script src="https://cdn.jsdelivr.net/npm/enhance-object-property-names-getters"></script>
     <script src="https://cdn.jsdelivr.net/npm/treeify@1.1.0/treeify.js"></script>
     <style>
+        #btn {
+            padding: 5px;
+            border-radius: 20px;
+        }
         a {
             color: green;
         }
-        .tf-nc {
-            cursor: pointer;
+        a.ofstart {
+            color: black;
         }
         body {
             background-color: rgb(231, 255, 212);
@@ -86,11 +198,14 @@
             overflow: hidden;
         }
         #start {
+            resize:vertical;
+            overflow:auto;
+            border-radius: 20px;
             background-color: rgb(220, 250, 194);
             height: 40%;
             border-style: solid;
             margin: 20px;
-            padding: 20px;
+            padding: 10px;
         }
     </style>
 </head>
@@ -98,7 +213,15 @@
 <div style="overflow: hidden;">
     <div id="head">
         <h3 id="notice" style="display: none; color: red">This app makes more sense on desktop rather than mobile devices!</h3>
-        <h2><a href="https://github.com/prototree">Proto Tree 🌳</a></h2>
+        <h2>
+            <a href="https://github.com/prototree">Proto Tree 🌳</a>
+            <a style="font-size: 14px" href="javascript:localStorage.full_screen = !JSON.parse(localStorage.full_screen);location.reload();">
+                <u><i>
+                ( full screen <iframe onload="localStorage.full_screen = localStorage.full_screen || 'false';this.parentElement.append(JSON.parse(localStorage.full_screen) ? 'on' : 'off');this.remove();"></iframe>
+                )
+                </i></u>
+            </a>
+        </h2>
         <div id="info">
             <h3>The Prototype Chain ⛓️</h3>
             <ul>
@@ -187,6 +310,7 @@
     <i>
         ~ Made with ❤️ By <a href="https://weizman.github.io/page-about">Gal Weizman</a> |
         Runs on
+        <a href="https://www.npmjs.com/package/@lavamoat/lavatube">LavaTube 🌋</a> ,
         <a href="https://www.npmjs.com/package/treeify">treeify@1.1.0</a> ,
         <a href="https://www.npmjs.com/package/treeflex">treeflex@2.0.1</a> ,
         <a href="https://www.npmjs.com/package/bootstrap">bootstrap@3.4.1</a> ,
@@ -194,121 +318,7 @@
     </i>
 </div>
 <script>
-    (function () {
-        function isPrimitive(v) {
-            if (null === v || undefined === v) {
-                return true;
-            }
-            if (['boolean', 'number', 'string'].includes(typeof v)) {
-                // return true;
-            }
-            return false;
-        }
-
-        // because of adsense
-        function isFrame(v) {
-            let i = 0;
-            let w;
-            while (w) {
-                w = top[i];
-                if (v === w) {
-                    return true;
-                }
-                i++;
-            }
-        }
-
-        const values = {};
-
-        function main(start) {
-            function getProp(val) {
-                switch (val) {
-                    case Number.prototype:
-                        return 'Number';
-                    case Array.prototype:
-                        return 'Array';
-                    case Boolean.prototype:
-                        return 'Boolean';
-                    case String.prototype:
-                        return 'String';
-                    default:
-                        try {
-                            return (val + '')
-                                .split('[object ').join('')
-                                .split('{ [native code] }').join('')
-                                .split(']').join('')
-                                .split('\n').join('');
-                        } catch (e) {
-                            console.error(val, e);
-                        }
-                }
-            }
-
-            function cb(path) {
-                let node = root;
-                for (let i = 0; i < path.length; i++) {
-                    const val = path[i];
-                    const prop = getProp(val);
-                    if (!node[prop]) {
-                        id += 1;
-                        values['b' + id] = val;
-                        node[prop] = path.length - 1 === i ? null : {_value_reference: 'vf' + id};
-                    }
-                    node = node[prop];
-                }
-            }
-
-            const root = {};
-            const props = Object.getAllPropertyNames(start);
-            for (let i = 0; i < props.length; i++) {
-                const prop = props[i];
-                let obj = start[prop];
-                if (isPrimitive(obj) || isFrame(obj)) continue;
-                const protos = [obj];
-                while (true) {
-                    if (isPrimitive(obj) || isFrame(obj)) break;
-                    const proto = Object.getPrototypeOf(obj);
-                    if (!proto) break;
-                    protos.push(proto);
-                    obj = proto;
-                }
-                protos.reverse();
-                cb(protos);
-            }
-            return root;
-        }
-
-        function includes(opts, prop) {
-            // ignore filters query param
-            if (prop.includes('filters=')) {
-                return false;
-            }
-            prop = prop.split('filters=')[0].toLowerCase();
-            // ignore adsense stuff
-            if (
-                prop.startsWith('__') ||
-                prop.includes('google') ||
-                prop.includes('amp') ||
-                prop.includes('ggeac') ||
-                prop.includes('default_')
-            ) {
-                return false;
-            }
-            if (!opts.filters.length) return true;
-            for (const filter of opts.filters) {
-                let found = false;
-                if (prop.includes(filter.filter.toLowerCase())) {
-                    found = true;
-                }
-                if (filter.not) {
-                    found = !found;
-                }
-                if (found) {
-                    return true;
-                }
-            }
-            return false;
-        }
+    (function(){
 
         let id = 0;
 
@@ -376,6 +386,11 @@
 
         function prepareMenu(menu, layers, maxLevels = 12, maxItems = 10) {
             const div = document.createElement('div');
+            const x = document.createElement('input');
+            x.placeholder = 'jump to';
+            x.onchange = () => shortcut(x.value);
+            div.appendChild(x);
+            div.append(' | ');
             for (const level in layers) {
                 const layer = layers[level];
                 if (!--maxLevels) break;
@@ -388,42 +403,108 @@
                     a.onclick = () => span.scrollIntoView({behavior: 'smooth'})
                     div.appendChild(a);
                     div.append(' | ');
-                    if (div.children.length % 9 === 0) {
-                        //div.appendChild(document.createElement('br'));
-                    }
                 }
             }
             div.lastChild?.remove();
             menu.appendChild(div);
         }
 
-        (function(){
-            const root = main(window);
-            console.log('%c👀 Observe full live tree representing the full prototype chain:', 'color:deepskyblue');
-            console.log(root);
-            console.log('%c🗺️ Map each entry in the full tree above to its real actual object in runtime:', 'color:deepskyblue');
-            console.log(values);
-            console.log('%c👀 Observe the full tree visually', 'color:deepskyblue');
-            console.log(treeify.asTree(root));
-            console.log('%c👆🏻 Begin at the top of the console 👆🏻', 'color:deepskyblue');
-            const e = document.createElement('ul');
-            tree(e, root, opts(window.location.search));
-            start.appendChild(e);
-            start.setAttribute('class', 'tf-tree');
-            e.innerHTML = e.innerHTML
-                .split('function').join('<xxx class="function">function</xxx>');
-            const layers = getLayers(start);
-            prepareMenu(menu, layers, 6, 30);
-            document.querySelectorAll('.tf-nc').forEach(span => {
-                span.addEventListener('click', () => {
-                        var searchParams = new URLSearchParams(window.location.search);
-                        searchParams.set('filters', span.textContent);
-                        window.location.search = searchParams.toString();
-                    }
-                );
-            });
-        }());
-    }())
+        function includes(opts, prop) {
+            // ignore filters query param
+            if (prop.includes('filters=')) {
+                return false;
+            }
+            prop = prop.split('filters=')[0].toLowerCase();
+            // ignore adsense stuff
+            if (
+                prop.startsWith('__') ||
+                prop.includes('google') ||
+                prop.includes('amp') ||
+                prop.includes('ggeac') ||
+                prop.includes('default_')
+            ) {
+                return false;
+            }
+            if (!opts.filters.length) return true;
+            for (const filter of opts.filters) {
+                let found = false;
+                if (prop.includes(filter.filter.toLowerCase())) {
+                    found = true;
+                }
+                if (filter.not) {
+                    found = !found;
+                }
+                if (found) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function toJson(head, obj) {
+            for (const child of head.children) {
+                const span = child.firstChild;
+                const prop = span?.firstChild?.textContent;
+                if (prop) {
+                    obj[prop] = {};
+                    toJson(child.lastChild, obj[prop]);
+                }
+            }
+        }
+
+        function getButtonInners() {
+            return `
+<button id="btn" onclick="navigator.clipboard.writeText(JSON.stringify(top.json));">
+    <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true">
+        <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+        <path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+    </svg>
+</button>
+`;
+        }
+
+        function shortcut(text) {
+            const xpath = `//a[contains(text(),"${text}")][@class="ofstart"]`;
+            const matchingElement = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            if (matchingElement?.parentElement) {
+                setTimeout(() =>
+                    matchingElement?.parentElement.scrollIntoView({behavior: 'smooth'}),
+                0);
+            }
+        }
+
+        const root = top.root;
+        const values = top.values;
+        const json = top.json = {};
+        const e = document.createElement('ul');
+        tree(e, root, opts(window.location.search));
+        e.querySelectorAll('ul:not(:has(*))').forEach(ul => ul.remove())
+        toJson(e, json);
+        console.log('%c👀 Observe full live tree representing the full prototype chain:', 'color:deepskyblue');
+        console.log('<top.root>', root);
+        console.log('%c🗺️ Map each entry in the full tree above to its real actual object in runtime:', 'color:deepskyblue');
+        console.log('<top.values>', values);
+        console.log('%c👀 Observe the filtered tree as a jsonable object:', 'color:deepskyblue');
+        console.log('<top.json>', json);
+        console.log('%c👀 Observe the filtered tree visually', 'color:deepskyblue');
+        console.log(treeify.asTree(json));
+        console.log('%c👆🏻 Begin at the top of the console 👆🏻', 'color:deepskyblue');
+        const element = start;
+        element.innerHTML = getButtonInners();
+        if (!!JSON.parse(localStorage.full_screen)) element.style.height = '80%';
+        element.appendChild(e);
+        element.setAttribute('class', 'tf-tree');
+        e.innerHTML = e.innerHTML
+            .split('function').join('<xxx class="function">function</xxx>');
+        const layers = getLayers(element);
+        prepareMenu(menu, layers, 6, 30);
+        document.querySelectorAll('.tf-nc').forEach(span => {
+            const searchParams = new URLSearchParams(window.location.search);
+            searchParams.set('filters', span.textContent);
+            const url = location.href.split('?')[0] + '?' + searchParams.toString();
+            span.innerHTML = `<a class="ofstart" href="${url}">${span.innerHTML}</a>`;
+        });
+    }());
 </script>
 </body>
 </html>
