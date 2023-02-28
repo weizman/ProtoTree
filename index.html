@@ -1,137 +1,33 @@
 <html>
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/@lavamoat/lavatube@0.2.1/lavatube.js"></script>
-    <script>
-        (function () {
-            function isPrimitive(v) {
-                if (null === v || undefined === v) {
-                    return true;
-                }
-                if (['boolean', 'number', 'string'].includes(typeof v)) {
-                    return true;
-                }
-                return false;
-            }
-
-            // because of adsense
-            function isFrame(v) {
-                let i = 0;
-                let w;
-                while (w) {
-                    w = top[i];
-                    if (v === w) {
-                        return true;
-                    }
-                    i++;
-                }
-            }
-
-            const root = {};
-            const values = {};
-
-            function cb(path) {
-                let node = root;
-                for (let i = 0; i < path.length; i++) {
-                    const val = path[i];
-                    const prop = getProp(val);
-                    if (!node[prop]) {
-                        id += 1;
-                        values['b' + id] = val;
-                        node[prop] = path.length - 1 === i ? null : {_value_reference: 'vf' + id};
-                    }
-                    node = node[prop];
-                }
-            }
-
-            function getProp(val) {
-                switch (val) {
-                    case Symbol.prototype:
-                        return 'Symbol';
-                    case Number.prototype:
-                        return 'Number';
-                    case Array.prototype:
-                        return 'Array';
-                    case Boolean.prototype:
-                        return 'Boolean';
-                    case String.prototype:
-                        return 'String';
-                    default:
-                        let v = '';
-                        try {
-                            if (typeof val === 'symbol') {
-                                v = val.toString();
-                            }
-                            else if (typeof val === 'function') {
-                                v = Function.prototype.toString.call(val);
-                            } else {
-                                v += val;
-                            }
-                            return v
-                                .split('[object ').join('')
-                                .split('{ [native code] }').join('')
-                                .split(']').join('')
-                                .split('\n').join('');
-                        } catch (e) {
-                            return ({}).toString.call(val).split('[object ').join('').split(']').join('');
-                        }
-                }
-            }
-
-            function main(obj) {
-                if (isPrimitive(obj) || isFrame(obj)) return;
-                const protos = [obj];
-                while (true) {
-                    if (isPrimitive(obj) || isFrame(obj)) break;
-                    const proto = Object.getPrototypeOf(obj);
-                    if (!proto) break;
-                    protos.push(proto);
-                    obj = proto;
-                }
-                protos.reverse();
-                cb(protos);
-            }
-
-            let id = 0;
-
-            (function(){
-                const lt = new LavaTube(main, {
-                    onShouldIgnoreError: (p, o, e) => {
-                        // console.error('sync error in LavaTube:', e);
-                        return true;
-                    },
-                    maxRecursionLimit: 9,
-                });
-                delete top.LavaTube;
-                lt.walk(window);
-                top.root = root;
-                top.values = values;
-            }());
-        }());
-    </script>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳️</text></svg>">
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳️</text></svg>">
     <title>Proto Tree</title>
     <meta name="author" content="Gal Weizman">
     <meta property="og:type" name="type" content="article">
     <meta property="og:site_name" content="Proto Tree">
-    <meta property="og:image" name="image" content="https://prototree.github.io/meta/img.jpg" />
-    <meta property="og:description" name="description" content="Observe the javascript prototype chain as an interactive tree in the browser" />
-    <meta property="og:title" name="name" content="ProtoTree - the javascript prototype chain as a tree" />
+    <meta property="og:image" name="image" content="https://prototree.github.io/meta/img.jpg"/>
+    <meta property="og:description" name="description"
+          content="Observe the javascript prototype chain as an interactive tree in the browser"/>
+    <meta property="og:title" name="name" content="ProtoTree - the javascript prototype chain as a tree"/>
     <meta property="og:image:type" content="meta/img.jpg">
-    <meta property="og:image:width" content="440" />
-    <meta property="og:image:height" content="440" />
+    <meta property="og:image:width" content="440"/>
+    <meta property="og:image:height" content="440"/>
 
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:site" content="@weizman">
     <meta name="twitter:creator" content="@weizman">
-    <meta name="twitter:title" content="ProtoTree - the javascript prototype chain as a tree" />
-    <meta name="twitter:description" content="Observe the javascript prototype chain as an interactive tree in the browser" />
-    <meta name="twitter:image:src" content="https://prototree.github.io/meta/img.jpg" />
+    <meta name="twitter:title" content="ProtoTree - the javascript prototype chain as a tree"/>
+    <meta name="twitter:description"
+          content="Observe the javascript prototype chain as an interactive tree in the browser"/>
+    <meta name="twitter:image:src" content="https://prototree.github.io/meta/img.jpg"/>
 
     <meta name="apple-mobile-web-app-title" content="ProtoTree - the javascript prototype chain as a tree">
     <meta name="application-name" content="ProtoTree - the javascript prototype chain as a tree">
 
     <meta property="forem:name" content="Proto Tree">
-    <meta property="forem:logo" content="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳️</text></svg>">
+    <meta property="forem:logo"
+          content="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳️</text></svg>">
     <meta property="forem:domain" content="prototree.github.io">
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -146,60 +42,73 @@
     <!-- Enable responsiveness on mobile devices-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1379968351324902" crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1379968351324902"
+            crossOrigin="anonymous"></script>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossOrigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/treeflex@2.0.1/dist/css/treeflex.css">
-    <script src="https://cdn.jsdelivr.net/npm/enhance-object-property-names-getters"></script>
     <script src="https://cdn.jsdelivr.net/npm/treeify@1.1.0/treeify.js"></script>
     <style>
         #btn {
             padding: 5px;
             border-radius: 20px;
         }
+
         a {
             color: green;
         }
+
         a.ofstart {
             color: black;
         }
+
         body {
             background-color: rgb(231, 255, 212);
         }
+
         .function {
             color: green;
         }
+
         code {
             color: green;
         }
+
         h2 {
             font-size: 22px;
         }
+
         h3 {
             font-size: 16px;
         }
-        ul,li {
+
+        ul, li {
             font-size: 12px !important;
         }
+
         #menu {
             padding-left: 5px;
             font-size: 12px !important;
             width: 70vh;
         }
+
         #head {
             padding: 10px;
             margin: 5px;
             float: left;
             height: 50%;
         }
+
         #head2 {
             padding: 20px;
             margin: 20px;
             overflow: hidden;
         }
+
         #start {
-            resize:vertical;
-            overflow:auto;
+            resize: vertical;
+            overflow: auto;
             border-radius: 20px;
             background-color: rgb(220, 250, 194);
             height: 40%;
@@ -212,13 +121,16 @@
 <body>
 <div style="overflow: hidden;">
     <div id="head">
-        <h3 id="notice" style="display: none; color: red">This app makes more sense on desktop rather than mobile devices!</h3>
+        <h3 id="notice" style="display: none; color: red">This app makes more sense on desktop rather than mobile
+            devices!</h3>
         <h2>
             <a href="https://github.com/prototree">Proto Tree 🌳</a>
-            <a style="font-size: 14px" href="javascript:localStorage.full_screen = !JSON.parse(localStorage.full_screen);location.reload();">
+            <a style="font-size: 14px"
+               href="javascript:localStorage.full_screen = !JSON.parse(localStorage.full_screen);location.reload();">
                 <u><i>
-                ( full screen <iframe onload="localStorage.full_screen = localStorage.full_screen || 'false';this.parentElement.append(JSON.parse(localStorage.full_screen) ? 'on' : 'off');this.remove();"></iframe>
-                )
+                    ( full screen
+                    <iframe onLoad="localStorage.full_screen = localStorage.full_screen || 'false';this.parentElement.append(JSON.parse(localStorage.full_screen) ? 'on' : 'off');this.remove();"></iframe>
+                    )
                 </i></u>
             </a>
         </h2>
@@ -226,7 +138,9 @@
             <h3>The Prototype Chain ⛓️</h3>
             <ul>
                 <li>
-                    Here you can observe the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain">prototype chain</a> generated in your browser, presented as a tree 🌳
+                    Here you can observe the <a
+                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain">prototype
+                    chain</a> generated in your browser, presented as a tree 🌳
                     <ul>
                         <li>
                             The tree can vary depending on:
@@ -240,12 +154,16 @@
                             </ul>
                         </li>
                         <li>
-                            <b> NOTICE: </b> This list is generated by climbing up the global object (aka <code>window</code>) and
-                                therefore is not complete because there are <br> prototypes that are inaccessible via the global object
-                                and are only accessible as return values from different objects and APIs
+                            <b> NOTICE: </b> This list is generated by climbing up the global object (aka
+                            <code>window</code>) and
+                            therefore is not complete because there are <br> prototypes that are inaccessible via the
+                            global object
+                            and are only accessible as return values from different objects and APIs
                             <ul>
                                 <li>
-                                    Suggestions for such <a href="https://github.com/ProtoTree/ProtoTree.github.io/issues/2">are welcome</a> to enhance this list to cover as much as possible!
+                                    Suggestions for such <a
+                                        href="https://github.com/ProtoTree/ProtoTree.github.io/issues/2">are welcome</a>
+                                    to enhance this list to cover as much as possible!
                                 </li>
                             </ul>
                         </li>
@@ -259,13 +177,15 @@
             <h3>Filters ⚙️</h3>
             <ul>
                 <li>
-                    Since the full tree is overwhelming, you can use filters by adding the <code>filters</code> query param
+                    Since the full tree is overwhelming, you can use filters by adding the <code>filters</code> query
+                    param
                     <ul>
                         <li>
                             Multiple filters can be separated by using <code>","</code>
                         </li>
                         <li>
-                            To achieve negative effect ("everything but") use <code>"!"</code> at the beginning of the filter
+                            To achieve negative effect ("everything but") use <code>"!"</code> at the beginning of the
+                            filter
                         </li>
                     </ul>
                     <ul>
@@ -275,7 +195,7 @@
                             <a href="?filters=!function">!function</a> |
                             <a href="?filters=Bool,Document">Bool,Document</a> |
                             <input style="width: 200px" placeholder="insert filter" id="input"
-                                   onblur="var searchParams = new URLSearchParams(window.location.search);searchParams.set('filters', input.value);window.location.search = searchParams.toString();"
+                                   onBlur="var searchParams = new URLSearchParams(window.location.search);searchParams.set('filters', input.value);window.location.search = searchParams.toString();"
                             >
                         </li>
                     </ul>
@@ -287,7 +207,7 @@
     </div>
     <div id="head2">
         <!-- ad1 -->
-        <ins class="adsbygoogle"
+        <ins className="adsbygoogle"
              style="display:block"
              data-ad-client="ca-pub-1379968351324902"
              data-ad-slot="3441937435"
@@ -305,7 +225,9 @@
         input.value = new URLSearchParams(window.location.search).get('filters');
     </script>
 </div>
-<div id="start"></div>
+<div id="start">
+    <marquee style="color: green" direction="right"><h2>Loading...</h2></marquee>
+</div>
 <div style="padding-left: 10px">
     <i>
         ~ Made with ❤️ By <a href="https://weizman.github.io/page-about">Gal Weizman</a> |
@@ -313,13 +235,11 @@
         <a href="https://www.npmjs.com/package/@lavamoat/lavatube">LavaTube 🌋</a> ,
         <a href="https://www.npmjs.com/package/treeify">treeify@1.1.0</a> ,
         <a href="https://www.npmjs.com/package/treeflex">treeflex@2.0.1</a> ,
-        <a href="https://www.npmjs.com/package/bootstrap">bootstrap@3.4.1</a> ,
-        <a href="https://www.npmjs.com/package/enhance-object-property-names-getters">enhance-object-property-names-getters</a>
+        <a href="https://www.npmjs.com/package/bootstrap">bootstrap@3.4.1</a>
     </i>
 </div>
 <script>
-    (function(){
-
+    onmessage = function (data) {
         let id = 0;
 
         function tree(node, obj, opts) {
@@ -346,7 +266,7 @@
             const filters = urlParams.get('filters');
             if (!filters) return opts;
             for (const filter of filters.split(',')) {
-                const f = { not: false, filter };
+                const f = {not: false, filter};
                 if (filter[0] === '!') {
                     f.not = true;
                     f.filter = filter.split('!').join('');
@@ -379,7 +299,7 @@
                     d += 1;
                     s = s.parentElement;
                 }
-                layers[d/2].push(span);
+                layers[d / 2].push(span);
             }
             return layers;
         }
@@ -468,13 +388,13 @@
             const matchingElement = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
             if (matchingElement?.parentElement) {
                 setTimeout(() =>
-                    matchingElement?.parentElement.scrollIntoView({behavior: 'smooth'}),
-                0);
+                        matchingElement?.parentElement.scrollIntoView({behavior: 'smooth'}),
+                    0);
             }
         }
 
-        const root = top.root;
-        const values = top.values;
+        if (!data.data.result) return;
+        const root = JSON.parse(data.data.result);
         const json = top.json = {};
         const e = document.createElement('ul');
         tree(e, root, opts(window.location.search));
@@ -482,8 +402,6 @@
         toJson(e, json);
         console.log('%c👀 Observe full live tree representing the full prototype chain:', 'color:deepskyblue');
         console.log('<top.root>', root);
-        console.log('%c🗺️ Map each entry in the full tree above to its real actual object in runtime:', 'color:deepskyblue');
-        console.log('<top.values>', values);
         console.log('%c👀 Observe the filtered tree as a jsonable object:', 'color:deepskyblue');
         console.log('<top.json>', json);
         console.log('%c👀 Observe the filtered tree visually', 'color:deepskyblue');
@@ -504,7 +422,132 @@
             const url = location.href.split('?')[0] + '?' + searchParams.toString();
             span.innerHTML = `<a class="ofstart" href="${url}">${span.innerHTML}</a>`;
         });
-    }());
+    };
+</script>
+<script>
+    (function(){
+        function begin() {
+            function isPrimitive(v) {
+                if (null === v || undefined === v) {
+                    return true;
+                }
+                if (['boolean', 'number', 'string'].includes(typeof v)) {
+                    return true;
+                }
+                return false;
+            }
+
+            // because of adsense
+            function isFrame(v) {
+                let i = 0;
+                let w;
+                while (w) {
+                    w = top[i];
+                    if (v === w) {
+                        return true;
+                    }
+                    i++;
+                }
+            }
+
+            const root = {};
+            const values = {};
+
+            function cb(path) {
+                let node = root;
+                for (let i = 0; i < path.length; i++) {
+                    const val = path[i];
+                    const prop = getProp(val);
+                    if (!node[prop]) {
+                        id += 1;
+                        values['b' + id] = val;
+                        node[prop] = path.length - 1 === i ? null : {_value_reference: 'vf' + id};
+                    }
+                    node = node[prop];
+                }
+            }
+
+            function getProp(val) {
+                switch (val) {
+                    case Symbol.prototype:
+                        return 'Symbol';
+                    case Number.prototype:
+                        return 'Number';
+                    case Array.prototype:
+                        return 'Array';
+                    case Boolean.prototype:
+                        return 'Boolean';
+                    case String.prototype:
+                        return 'String';
+                    default:
+                        let v = '';
+                        try {
+                            if (typeof val === 'symbol') {
+                                v = val.toString();
+                            } else if (typeof val === 'function') {
+                                v = Function.prototype.toString.call(val);
+                            } else {
+                                v += val;
+                            }
+                            if ((v).startsWith('data:text/html;Base64,')) {
+                                return '[location]';
+                            }
+                            return v
+                                .split('[object ').join('')
+                                .split('{ [native code] }').join('')
+                                .split(']').join('')
+                                .split('\n').join('');
+                        } catch (e) {
+                            return ({}).toString.call(val).split('[object ').join('').split(']').join('');
+                        }
+                }
+            }
+
+            function main(obj) {
+                if (isPrimitive(obj) || isFrame(obj)) return;
+                const protos = [obj];
+                while (true) {
+                    if (isPrimitive(obj) || isFrame(obj)) break;
+                    const proto = Object.getPrototypeOf(obj);
+                    if (!proto) break;
+                    protos.push(proto);
+                    obj = proto;
+                }
+                protos.reverse();
+                cb(protos);
+            }
+
+            let id = 0;
+
+            (function () {
+                const lt = new LavaTube(main, {
+                    onShouldIgnoreError: (p, o, e) => {
+                        // console.error('sync error in LavaTube:', e);
+                        return true;
+                    },
+                    maxRecursionLimit: 9,
+                });
+                window.LavaTube = undefined;
+                window.begin = undefined;
+                lt.walk(window);
+                const result = JSON.stringify(root);
+                setTimeout(() => {
+                    top.postMessage({result}, '*');
+                    console.log('%c Map each entry in the full tree above to its real actual object in runtime:', 'color:deepskyblue');
+                    console.log('<top.values>', values);
+                }, 100);
+            }());
+        }
+        document.write(`
+<ifram`+`e id="ifrxxx" style="display: none" src="data:text/html;Base64,${
+            btoa(
+                atob('PGh0bWw+PGhlYWQ+PHNjcmlwdCBzcmM9Imh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vQGxhdmFtb2F0L2xhdmF0dWJlQDAuMi4xL2xhdmF0dWJlLmpzIj48L3NjcmlwdD48L2hlYWQ+PGJvZHk+PHNjcmlwdD4=') +
+                begin.toString() + ';' + 'begin();' +
+                atob('PC9zY3JpcHQ+PC9ib2R5PjwvaHRtbD4=')
+            )
+        }"></if`+`rame>
+`);
+    }())
 </script>
 </body>
 </html>
