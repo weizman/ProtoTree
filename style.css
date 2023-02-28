@@ -1,0 +1,66 @@
+#btn {
+    padding: 5px;
+    border-radius: 20px;
+}
+
+a {
+    color: green;
+}
+
+a.ofstart {
+    color: black;
+}
+
+body {
+    background-color: rgb(231, 255, 212);
+}
+
+.function {
+    color: green;
+}
+
+code {
+    color: green;
+}
+
+h2 {
+    font-size: 22px;
+}
+
+h3 {
+    font-size: 16px;
+}
+
+ul, li {
+    font-size: 12px !important;
+}
+
+#menu {
+    padding-left: 5px;
+    font-size: 12px !important;
+    width: 70vh;
+}
+
+#head {
+    padding: 10px;
+    margin: 5px;
+    float: left;
+    height: 50%;
+}
+
+#head2 {
+    padding: 20px;
+    margin: 20px;
+    overflow: hidden;
+}
+
+#start {
+    resize: vertical;
+    overflow: auto;
+    border-radius: 20px;
+    background-color: rgb(220, 250, 194);
+    height: 37%;
+    border-style: solid;
+    margin: 20px;
+    padding: 10px;
+}
