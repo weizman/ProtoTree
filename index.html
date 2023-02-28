@@ -111,7 +111,7 @@
             overflow: auto;
             border-radius: 20px;
             background-color: rgb(220, 250, 194);
-            height: 40%;
+            height: 37%;
             border-style: solid;
             margin: 20px;
             padding: 10px;
@@ -233,16 +233,24 @@
     </div>
 </div>
 <div style="padding-left: 10px">
-    <i>
-        ~ Made with ❤️ By <a href="https://weizman.github.io/page-about">Gal Weizman</a> |
-        Runs on
-        <a href="https://www.npmjs.com/package/@lavamoat/lavatube">LavaTube 🌋</a> ,
-        <a href="https://www.npmjs.com/package/treeify">treeify@1.1.0</a> ,
-        <a href="https://www.npmjs.com/package/treeflex">treeflex@2.0.1</a> ,
-        <a href="https://www.npmjs.com/package/bootstrap">bootstrap@3.4.1</a>
-    </i>
+    <div>
+        <div style="white-space: nowrap" id="props"></div>
+        <i>
+            ~ Made with ❤️ By <a href="https://weizman.github.io/page-about">Gal Weizman</a> |
+            Runs on
+            <a href="https://www.npmjs.com/package/@lavamoat/lavatube">LavaTube 🌋</a> ,
+            <a href="https://www.npmjs.com/package/treeify">treeify@1.1.0</a> ,
+            <a href="https://www.npmjs.com/package/treeflex">treeflex@2.0.1</a> ,
+            <a href="https://www.npmjs.com/package/bootstrap">bootstrap@3.4.1</a>
+        </i>
+    </div>
 </div>
 <script>
+    const ownNames = {};
+    function setOwns(span) {
+        props.innerHTML = '<p><b>Own Property Names:</b> ' + ownNames[span.id] + '</p>';
+    }
+
     onmessage = function (data) {
         let id = 0;
 
@@ -256,7 +264,8 @@
                 if (prop === '_value_reference' || prop === '_own_names') continue;
                 const val = obj[prop];
                 id += 1;
-                node.innerHTML += `<li><span found="${includes(opts, prop, obj.value)}" class="tf-nc">${prop}</span><ul id="${'id' + id}"></ul></li>`;
+                ownNames[val._value_reference] = val._own_names.join(', ');
+                node.innerHTML += `<li><span onmouseover="setOwns(this)" id="${val._value_reference}" found="${includes(opts, prop, obj.value)}" class="tf-nc">${prop}</span><ul id="${'id' + id}"></ul></li>`;
                 tree(node.querySelector('#' + 'id' + id), val, opts);
             }
             if (!node.parentElement?.querySelector('[found="true"]')) {
