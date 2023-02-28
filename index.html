@@ -253,7 +253,7 @@
                 }
             }
             for (const prop in obj) {
-                if (prop === '_value_reference') continue;
+                if (prop === '_value_reference' || prop === '_own_names') continue;
                 const val = obj[prop];
                 id += 1;
                 node.innerHTML += `<li><span found="${includes(opts, prop, obj.value)}" class="tf-nc">${prop}</span><ul id="${'id' + id}"></ul></li>`;
@@ -398,7 +398,7 @@
         }
 
         if (!data.data.result) return;
-        const root = JSON.parse(data.data.result);
+        const root = top.root = JSON.parse(data.data.result);
         const json = top.json = {};
         const e = document.createElement('ul');
         tree(e, root, opts(window.location.search));
@@ -465,7 +465,10 @@
                     if (!node[prop]) {
                         id += 1;
                         values['b' + id] = val;
-                        node[prop] = path.length - 1 === i ? null : {_value_reference: 'vf' + id};
+                        node[prop] = {
+                            _value_reference: 'vf' + id,
+                            _own_names: Object.getOwnPropertyNames(val),
+                        };
                     }
                     node = node[prop];
                 }
