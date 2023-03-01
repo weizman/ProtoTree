@@ -163,7 +163,7 @@ onmessage = function (data) {
     const json = top.json = {};
     const e = document.createElement('ul');
     tree(e, root, opts(window.location.search));
-    e.querySelectorAll('ul:not(:has(*))').forEach(ul => ul.remove())
+    Array.from(e.querySelectorAll('ul')).filter(a=>!a.children.length).forEach(u=>u.remove());
     toJson(e, json);
     console.log('%c👀 Observe full live tree representing the full prototype chain:', 'color:deepskyblue');
     console.log('<top.root>', root);
