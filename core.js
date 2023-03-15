@@ -118,7 +118,7 @@
     document.write(`
 <ifram`+`e id="generator" style="display: none" src="data:text/html;Base64,${
         btoa(
-            atob('PGh0bWw+PGhlYWQ+PHNjcmlwdCBzcmM9Imh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vQGxhdmFtb2F0L2xhdmF0dWJlQDAuMi4xL2xhdmF0dWJlLmpzIj48L3NjcmlwdD48L2hlYWQ+PGJvZHk+PHNjcmlwdD4=') +
+            atob('PGh0bWw+PGhlYWQ+PHNjcmlwdCBzcmM9Imh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vQGxhdmFtb2F0L2xhdmF0dWJlL2xhdmF0dWJlLmpzIj48L3NjcmlwdD48L2hlYWQ+PGJvZHk+PHNjcmlwdD4=') +
             begin.toString() + ';' + 'begin();' +
             atob('PC9zY3JpcHQ+PC9ib2R5PjwvaHRtbD4=')
         )
