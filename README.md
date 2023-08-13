@@ -14,3 +14,5 @@
 * In order to avoid external polution that the app creates, ProtoTree runs the recursive operation inside a cross origin iframe, to leverage a fresh new realm for the job
 * Follow the instructions on the app itself to take full adventage of this tool
 * Enjoy and please consider to ⭐ this project
+
+> *Read further @ https://twitter.com/WeizmanGal/status/1684608574444785664*
