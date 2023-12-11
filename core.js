@@ -96,16 +96,9 @@
         let id = 0;
 
         (function () {
-            const lt = new LavaTube(main, {
-                onShouldIgnoreError: (p, o, e) => {
-                    // console.error('sync error in LavaTube:', e);
-                    return true;
-                },
-                maxRecursionLimit: 9,
-            });
+            new LavaTube({maxRecursionLimit:3}).walk(window, main);
             window.LavaTube = undefined;
             window.begin = undefined;
-            lt.walk(window);
             const result = JSON.stringify(root);
             setTimeout(() => {
                 window.values = values;
@@ -115,13 +108,20 @@
             }, 100);
         }());
     }
-    document.write(`
-<ifram`+`e id="generator" style="display: none" src="data:text/html;Base64,${
-        btoa(
-            atob('PGh0bWw+PGhlYWQ+PHNjcmlwdCBzcmM9Imh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vQGxhdmFtb2F0L2xhdmF0dWJlL2xhdmF0dWJlLmpzIj48L3NjcmlwdD48L2hlYWQ+PGJvZHk+PHNjcmlwdD4=') +
-            begin.toString() + ';' + 'begin();' +
-            atob('PC9zY3JpcHQ+PC9ib2R5PjwvaHRtbD4=')
-        )
-    }"></if`+`rame>
-`);
+    const content = `
+        <ht`+`ml>
+            <he`+`ad>
+                <sc`+`ript>
+                    ${begin.toString()}
+                </s`+`cript>
+                <sc`+`ript type="module">
+                    import LavaTube from 'https://lavamoat.github.io/LavaTube/src/index.js';
+                    window.LavaTube = LavaTube;
+                    window.begin();
+                </s`+`cript>
+            </h`+`ead>
+            <bo`+`dy></b`+`ody>
+        </h`+`tml>
+    `;
+    document.write(`<ifram`+`e id="generator" style="display: none" src="data:text/html;Base64,${btoa(content)}"></if`+`rame>`);
 }())
