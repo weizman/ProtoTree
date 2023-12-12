@@ -96,9 +96,10 @@
         let id = 0;
 
         (function () {
-            new LavaTube({maxRecursionLimit:3}).walk(window, main);
+            const lt = new LavaTube({maxRecursionLimit:3});
             window.LavaTube = undefined;
             window.begin = undefined;
+            lt.walk(window, main);
             const result = JSON.stringify(root);
             setTimeout(() => {
                 window.values = values;
