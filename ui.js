@@ -13,7 +13,7 @@ onmessage = function (data) {
             }
         }
         for (const prop in obj) {
-            if (prop === '_value_reference' || prop === '_own_names') continue;
+            if (prop === '_value_reference' || prop === '_own_names' || prop.includes('LavaTube')) continue;
             const val = obj[prop];
             id += 1;
             ownNames[val._value_reference] = val._own_names.join(', ');
