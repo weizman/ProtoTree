@@ -99,7 +99,13 @@
             const lt = LavaTube;
             window.LavaTube = undefined;
             window.begin = undefined;
-            lt.walk(window, main, {maxDepth:3});
+            const startTime = Date.now();
+            const allValues = lt.getAllValues(window, {maxDepth:3});
+            const endTime = Date.now();
+            console.log(`LavaTube found ${allValues.length} values in ${endTime - startTime}ms`);
+            for (const value of allValues) {
+                main(value);
+            }
             const result = JSON.stringify(root);
             setTimeout(() => {
                 window.values = values;
