@@ -115,21 +115,13 @@
             }, 100);
         }());
     }
-    const content = `
-        <ht`+`ml>
-            <he`+`ad>
-                <sc`+`ript>
-                    ${begin.toString()}
-                </s`+`cript>
-                <sc`+`ript type="module">
-                    // import LavaTube from 'http://127.0.0.1:9000/src/index.js';
-                    import LavaTube from 'https://cdn.jsdelivr.net/npm/@lavamoat/lavatube@0.2.3/lavatube.js';
-                    window.LavaTube = LavaTube;
-                    window.begin();
-                </s`+`cript>
-            </h`+`ead>
-            <bo`+`dy></b`+`ody>
-        </h`+`tml>
-    `;
-    document.write(`<ifram`+`e id="generator" style="display: none" src="data:text/html;Base64,${btoa(content)}"></if`+`rame>`);
+    document.write(`
+<ifram`+`e id="generator" style="display: none" src="data:text/html;Base64,${
+        btoa(
+            atob('PGh0bWw+PGhlYWQ+PHNjcmlwdCBzcmM9Imh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vQGxhdmFtb2F0L2xhdmF0dWJlQDAuMi4zL2xhdmF0dWJlLmpzIj48L3NjcmlwdD48L2hlYWQ+PGJvZHk+PHNjcmlwdD4=') +
+            begin.toString() + ';' + 'begin();' +
+            atob('PC9zY3JpcHQ+PC9ib2R5PjwvaHRtbD4=')
+        )
+    }"></if`+`rame>
+`);
 }())
