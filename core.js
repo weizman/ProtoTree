@@ -96,16 +96,10 @@
         let id = 0;
 
         (function () {
-            const lt = new LavaTube(main, {
-                onShouldIgnoreError: (p, o, e) => {
-                    // console.error('sync error in LavaTube:', e);
-                    return true;
-                },
-                maxRecursionLimit: 9,
-            });
+            const lt = LavaTube;
             window.LavaTube = undefined;
             window.begin = undefined;
-            lt.walk(window);
+            lt.walk(window, main, {maxDepth:3});
             const result = JSON.stringify(root);
             setTimeout(() => {
                 window.values = values;
@@ -123,7 +117,7 @@
                 </s`+`cript>
                 <sc`+`ript type="module">
                     // import LavaTube from 'http://127.0.0.1:9000/src/index.js';
-                    import LavaTube from 'https://cdn.jsdelivr.net/npm/@lavamoat/lavatube@0.2.3/lavatube.js';
+                    import LavaTube from 'https://cdn.jsdelivr.net/npm/@lavamoat/lavatube/lavatube.js';
                     window.LavaTube = LavaTube;
                     window.begin();
                 </s`+`cript>
